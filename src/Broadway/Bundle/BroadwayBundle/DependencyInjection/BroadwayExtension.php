@@ -123,9 +123,23 @@ class BroadwayExtension extends Extension
     {
         $loader->load('event_store.xml');
 
+        if ($config['repository'] === 'in_memory') {
+            $this->loadInMemoryEventStore($config, $container, $loader);
+
+            return;
+        }
+
         if ($config['dbal']['enabled']) {
             $this->loadDBALEventStore($config, $container, $loader);
         }
+    }
+
+    private function loadInMemoryEventStore(array $config, ContainerBuilder $container, XmlFileLoader $loader)
+    {
+        $container->setAlias(
+            'broadway.event_store',
+            'broadway.event_store.in_memory'
+        );
     }
 
     private function loadDBALEventStore(array $config, ContainerBuilder $container, XmlFileLoader $loader)
